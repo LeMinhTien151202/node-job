@@ -41,7 +41,7 @@ export class UsersController {
 
   @Post()
   async createUser(@Body() createUserDto: CreateUserDto,@User() user: IUser) {
-    let newUser = await this.usersService.create(createUserDto, user);
+    const newUser = await this.usersService.create(createUserDto, user);
     return {
       id: newUser?._id,
       createdAt: newUser?.createdAt,

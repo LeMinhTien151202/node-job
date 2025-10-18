@@ -24,8 +24,8 @@ export class ResumesController {
   @ResponseMessage('Get all resumes')
   findAll(@Query("current") currentPage: string,
     @Query("pageSize") limit: string,
-    @Query() qs: string) {
-    return this.resumesService.findAll();
+    @Query() qs: string,) {
+    return this.resumesService.findAll(+currentPage,+limit,qs);
   }
 
   @Get(':id')
