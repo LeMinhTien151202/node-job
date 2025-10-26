@@ -49,11 +49,22 @@ uploadFile(@UploadedFile() file: Express.Multer.File) {
     throw new UnprocessableEntityException('File too large');
   }
 
-  return {
-    message: 'File uploaded successfully',
-    filename: file.originalname,
-    mimetype: file.mimetype,
-  };
+  return this.filesService.uploadFile(file, 'default');
+}
+
+@Post('upload-company-logo')
+@Public()
+@UseInterceptors(FileInterceptor('fileUpload'))
+uploadCompanyLogo(@UploadedFile() file: Express.Multer.File) {
+  if (!/^image\/(jpe?g|png|gif)$/i.test(file.mimetype)) {
+    throw new UnprocessableEntityException('Invalid file type');
+  }
+
+  if (file.size > 1024 * 1024) {
+    throw new UnprocessableEntityException('File too large');
+  }
+
+  return this.filesService.uploadCompanyLogo(file);
 }
 
 

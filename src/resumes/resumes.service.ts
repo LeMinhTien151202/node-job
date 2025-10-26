@@ -42,6 +42,16 @@ export class ResumesService {
 
   async findByUsers(user: IUser) {
     return await this.resumeModel.find({userId: user._id})
+    .sort({createdAt: -1})
+    .populate([
+      {
+        path: 'companyId',
+        select: {_id: -1, name: 1, email: 1}},
+      {
+        path: 'jobId',
+        select: {_id: -1, name: 1, email: 1}
+      }
+    ]);
   }
   async findAll(currentPage: number, limit: number, qs: any) {
     const { filter, sort, population, projection } = aqp(qs);

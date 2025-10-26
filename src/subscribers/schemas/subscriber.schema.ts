@@ -1,41 +1,20 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import mongoose, { HydratedDocument } from 'mongoose';
 import MongooseDelete, { SoftDeleteDocument, SoftDeleteModel } from 'mongoose-delete';
-import { Role } from 'src/roles/schemas/role.schema';
+import { Permission } from 'src/permissions/schemas/permission.schema';
 
-// export type UserDocument = HydratedDocument<User>;
+// export type SubscriberDocument = HydratedDocument<Subscriber>;
 //bật time stamp câp nhật createdAt, updatedAt
 @Schema({ timestamps: true })
-export class User {
+export class Subscriber {
   @Prop({ required: true })
   email: string;
-
-  @Prop({ required: true })
-  password: string;
 
   @Prop()
   name: string;
 
   @Prop()
-  age: number;
-
-  @Prop()
-  gender: string;
-
-  @Prop()
-  address: string;
-
-  @Prop({type: Object})
-  company:  {
-      _id: mongoose.Schema.Types.ObjectId,
-      email: string
-    };
-
-  @Prop({type: mongoose.Schema.Types.ObjectId, ref: Role.name })
-  role: mongoose.Schema.Types.ObjectId;
-
-  @Prop()
-  refreshToken: string;
+  skills: string[];
 
   @Prop()
   createdAt: Date;
@@ -61,7 +40,6 @@ export class User {
     email: string
   };
   
-
   @Prop()
   isDeleted: boolean;
 
@@ -70,17 +48,20 @@ export class User {
 
 }
 // Extend Document với SoftDeleteDocument
-export type UserDocument = User & Document & SoftDeleteDocument;
+export type SubscriberDocument = Subscriber & Document & SoftDeleteDocument;
 
 // Extend Model với SoftDeleteModel
-export type UserModel = SoftDeleteModel<UserDocument>;
+export type SubscriberModel = SoftDeleteModel<SubscriberDocument>;
 
-export const UserSchema = SchemaFactory.createForClass(User);
+export const SubscriberSchema = SchemaFactory.createForClass(Subscriber);
 
 // Thêm plugin mongoose-delete
-UserSchema.plugin(MongooseDelete, {
+SubscriberSchema.plugin(MongooseDelete, {
   deletedAt: true,
   deletedBy: true,
   overrideMethods: 'all',
   indexFields: ['deleted', 'deletedAt']
 });
+
+
+

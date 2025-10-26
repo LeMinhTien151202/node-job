@@ -7,10 +7,13 @@ import mongoose, { Model, mongo } from 'mongoose';
 import {genSaltSync, hashSync, compareSync} from 'bcryptjs';
 import { IUser } from './users.interface';
 import aqp from 'api-query-params';
+import { Role, RoleModel } from 'src/roles/schemas/role.schema';
+import { USER_ROLE } from 'src/databases/sample';
 @Injectable()
 export class UsersService {
   constructor(
-    @InjectModel(UserM.name) private userModel: UserModel
+    @InjectModel(UserM.name) private userModel: UserModel,
+    @InjectModel(Role.name) private roleModel: RoleModel
   ) {}
 
   getHashPassword(password: string) {
@@ -25,8 +28,16 @@ export class UsersService {
     if (IsEmail) {
       throw new BadRequestException(`Email ${createUserDto.email} đã tồn tại`);
     }
+
+    //fetch user role
+    const userRole = await this.roleModel.findOne({name: USER_ROLE});
+
     const hashedPassword = this.getHashPassword(password);
-    let newUser = await this.userModel.create({name, email, password : hashedPassword, age, gender, address,role,
+    let newUser = await this.userModel.create({name, email, password : hashedPassword,
+       age,
+        gender,
+         address,
+         role: userRole._id,
       createdBy: {
         _id: user._id,
         email: user.email,
@@ -66,12 +77,13 @@ export class UsersService {
     if(!mongoose.isValidObjectId(id)) {
       return "user không tồn tại";
     }
-    let user = await this.userModel.findOne({ _id: id }).select("-password");
+    let user = await this.userModel.findOne({ _id: id }).select("-password")
+    .populate({path: 'role', select: {_id: -1, name: 1}});
     return user;
   }
   async findOneByUsername(username: string) {
     
-    let user = await this.userModel.findOne({ email: username });
+    let user = await this.userModel.findOne({ email: username }).populate({path: 'role', select: {name: 1}});
     return user;
   }
 
@@ -119,6 +131,5 @@ export class UsersService {
   findUserByToken = async (refreshToken: string) => {
     return await this.userModel.findOne({ refreshToken });
   }
-
 
 }

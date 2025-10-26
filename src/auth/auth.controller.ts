@@ -6,13 +6,18 @@ import { RegisterUserDto } from 'src/users/dto/create-user.dto';
 import { request } from 'express';
 import { Request, Response } from 'express';
 import { IUser } from 'src/users/users.interface';
+import { RolesService } from 'src/roles/roles.service';
+import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 @Controller('auth')
 export class AuthController {
   constructor(
-    private readonly authService: AuthService
+    private readonly authService: AuthService,
+    private readonly rolesService: RolesService
   ) {}
 
   @UseGuards(LocalAuthGuard)
+  @UseGuards(ThrottlerGuard)
+  @Throttle({ login: { limit: 2, ttl: 60000 } })
   @Public()
   @Post('/login')
   @ResponseMessage('Login successfully')
@@ -35,7 +40,9 @@ export class AuthController {
 
   @ResponseMessage('Lấy thông tin tài khoản thành công')
   @Get('/account')
-  handleGetAccount(@User() user: IUser)  {
+  async handleGetAccount(@User() user: IUser)  {
+    const temp = await this.rolesService.findOne(user.role._id) as any;
+    user.permissions = temp.permissions;
     return { user };
   }
 

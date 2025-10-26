@@ -15,10 +15,30 @@ import { FilesModule } from './files/files.module';
 import { ResumesModule } from './resumes/resumes.module';
 import { PermissionsModule } from './permissions/permissions.module';
 import { RolesModule } from './roles/roles.module';
+import { DatabasesModule } from './databases/databases.module';
+import { MailModule } from './mail/mail.module';
+import { SubscribersModule } from './subscribers/subscribers.module';
 import mongoose from 'mongoose';
 import mongooseDelete from 'mongoose-delete';
+import { ScheduleModule } from '@nestjs/schedule';
+import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { HealthModule } from './health/health.module';
 @Module({
-  imports: [UsersModule,
+  imports: [
+    ThrottlerModule.forRoot([
+      {
+        name: 'default',
+        ttl: 60000, // 60 giây (1 phút)
+        limit: 10,  // Giới hạn chung: 10 requests/phút
+      },
+      {
+        name: 'login',
+        ttl: 60000, // 60 giây
+        limit: 2,   // Riêng cho login: chỉ 2 lần/phút
+      },
+    ]),
+    ScheduleModule.forRoot(),
+    UsersModule,
      MongooseModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => ({
@@ -37,9 +57,17 @@ import mongooseDelete from 'mongoose-delete';
   ResumesModule,
   PermissionsModule,
   RolesModule,
+  DatabasesModule,
+  MailModule,
+  SubscribersModule,
+  HealthModule,
 ],
   controllers: [AppController],
-  providers: [AppService, 
+  providers: [AppService,
+    // {
+    //   provide: APP_GUARD,
+    //   useClass: ThrottlerGuard, // Apply global guard
+    // },
   //   {
   //   // Global guard toàn controller
   //   provide: APP_GUARD,

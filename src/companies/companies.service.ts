@@ -70,4 +70,31 @@ export class CompaniesService {
     });
     return this.companyModel.delete({_id: id});
   }
+
+  /**
+   * Cập nhật logo cho company
+   * @param id - ID của company
+   * @param logoPath - Đường dẫn logo mới
+   * @param user - User thực hiện update
+   * @returns Company đã được cập nhật
+   */
+  async updateLogo(id: string, logoPath: string, user: IUser) {
+    const updatedCompany = await this.companyModel.findByIdAndUpdate(
+      id,
+      {
+        logo: logoPath,
+        updatedBy: {
+          _id: user._id,
+          email: user.email,
+        }
+      },
+      { new: true }
+    );
+
+    if (!updatedCompany) {
+      throw new Error('Company not found');
+    }
+
+    return updatedCompany;
+  }
 }

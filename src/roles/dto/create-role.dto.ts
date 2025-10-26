@@ -11,7 +11,6 @@ export class CreateRoleDto {
             isActive: boolean;
             
             @IsNotEmpty({ message: 'module khong duoc de trong' })
-            @IsMongoId({message: 'môngId khong dung dinh dang'})
             @IsArray({message: ' khong phai mang'})
-            permissions: mongoose.Schema.Types.ObjectId;
+            permissions: mongoose.Schema.Types.ObjectId[];
 }

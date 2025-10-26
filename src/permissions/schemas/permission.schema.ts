@@ -16,7 +16,7 @@ export class Permission {
   method: string;
 
   @Prop()
-  module: number;
+  module: string;
 
   @Prop()
   createdAt: Date;
