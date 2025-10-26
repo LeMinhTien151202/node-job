@@ -31,7 +31,7 @@ export class FilesService {
    * @param folderType - Loại folder (company, user, default)
    * @returns Object chứa đường dẫn file
    */
-  uploadFile(file: Express.Multer.File, folderType: string = 'default') {
+  uploadFile(file: Express.Multer.File, folderType = 'default') {
     if (!file) {
       throw new Error('No file uploaded');
     }

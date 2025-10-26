@@ -9,6 +9,7 @@ import { IUser } from './users.interface';
 import aqp from 'api-query-params';
 import { Role, RoleModel } from 'src/roles/schemas/role.schema';
 import { USER_ROLE } from 'src/databases/sample';
+import { constants } from 'node:buffer';
 @Injectable()
 export class UsersService {
   constructor(
@@ -33,7 +34,7 @@ export class UsersService {
     const userRole = await this.roleModel.findOne({name: USER_ROLE});
 
     const hashedPassword = this.getHashPassword(password);
-    let newUser = await this.userModel.create({name, email, password : hashedPassword,
+    const newUser = await this.userModel.create({name, email, password : hashedPassword,
        age,
         gender,
          address,
@@ -77,13 +78,13 @@ export class UsersService {
     if(!mongoose.isValidObjectId(id)) {
       return "user không tồn tại";
     }
-    let user = await this.userModel.findOne({ _id: id }).select("-password")
+    const user = await this.userModel.findOne({ _id: id }).select("-password")
     .populate({path: 'role', select: {_id: -1, name: 1}});
     return user;
   }
   async findOneByUsername(username: string) {
     
-    let user = await this.userModel.findOne({ email: username }).populate({path: 'role', select: {name: 1}});
+    const user = await this.userModel.findOne({ email: username }).populate({path: 'role', select: {name: 1}});
     return user;
   }
 
@@ -95,7 +96,7 @@ export class UsersService {
     if(!mongoose.isValidObjectId(id)) {
       throw new NotFoundException("user không tồn tại");
     }
-    let newUser = await this.userModel.updateOne({ _id: id }, { ...updateUserDto,
+    const newUser = await this.userModel.updateOne({ _id: id }, { ...updateUserDto,
       updatedBy: {
         _id: user._id,
         email: user.email,
@@ -120,7 +121,7 @@ export class UsersService {
   async register(user : RegisterUserDto ){
     const hashedPassword = this.getHashPassword(user.password);
     user.password = hashedPassword;
-    let newUser = await this.userModel.create({...user, role: "user"});
+    const newUser = await this.userModel.create({...user, role: "user"});
     return newUser;
   }
 

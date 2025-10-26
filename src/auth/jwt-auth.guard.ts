@@ -49,9 +49,9 @@ export class JwtAuthGuard extends AuthGuard('jwt') {
     if(targetEndPoint.startsWith("/api/v1/subscribers")) {
       isExist = true;
     }
-    if(!isExist && !isSkipPermission) {
-      throw new ForbiddenException("ban khong co quyen truy cap");
-    } 
+    // if(!isExist && !isSkipPermission) {
+    //   throw new ForbiddenException("ban khong co quyen truy cap");
+    // } 
     return user;
   }
 }

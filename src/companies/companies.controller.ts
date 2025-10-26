@@ -4,10 +4,10 @@ import { CreateCompanyDto } from './dto/create-company.dto';
 import { UpdateCompanyDto } from './dto/update-company.dto';
 import { Public, ResponseMessage, User } from 'src/decorator/customize';
 import { IUser } from 'src/users/users.interface';
-import { Throttle, ThrottlerGuard } from '@nestjs/throttler';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { FilesService } from 'src/files/files.service';
 import { UnprocessableEntityException } from '@nestjs/common';
+import { MulterConfigService } from 'src/files/multer.config';
 
 @Controller('companies')
 export class CompaniesController {
